@@ -102,16 +102,109 @@
             </form>
             
             <div class="text-center pt-2">
-                <p class="text-[10px] text-neutral-400 leading-relaxed font-semibold">
-                    Admin: Admin / 12345 &nbsp;|&nbsp; Users: masterchief / 117, glados / 76421, docbrown / 88, Test / 654321
-                </p>
-                <p id="local-file-warning" class="text-[9px] text-neutral-300 mt-3 hidden bg-white/5 border border-white/10 p-2.5 rounded-xl leading-relaxed">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                    <strong>Λειτουργία χωρίς Web Server (file://):</strong> Για να διαβαστούν οι χρήστες από το <u>users.txt</u>, ανοίξτε την εφαρμογή μέσω ενός τοπικού διακομιστή. Αυτή τη στιγμή λειτουργούν μόνο οι ενσωματωμένοι χρήστες.
-                </p>
+                <button type="button" onclick="openCreateUserModal(true)" class="text-[11px] text-neutral-400 hover:text-neutral-200 font-semibold transition-all">
+                    Δημιουργία Χρήστη
+                </button>
             </div>
         </div>
     </div>
+
+        <div id="create-user-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl border border-neutral-100 animate-fadeIn flex flex-col max-h-[90vh]">
+                <div class="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-user-plus text-neutral-700"></i>
+                        <h3 class="text-base font-bold text-neutral-900">Δημιουργία Χρήστη</h3>
+                    </div>
+                    <button onclick="closeCreateUserModal()" class="text-neutral-400 hover:text-neutral-900 p-1 rounded-lg transition-all">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4 py-2 overflow-y-auto pr-1 flex-grow">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-800 mb-1">Όνομα *</label>
+                            <input type="text" id="new-user-name" oninput="updateNewUserUsernamePreview()" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-800 mb-1">Επίθετο *</label>
+                            <input type="text" id="new-user-surname" oninput="updateNewUserUsernamePreview()" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-800 mb-1">Username</label>
+                        <input type="text" id="new-user-username" placeholder="Συμπληρώνεται αυτόματα — μπορείτε να το αλλάξετε" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                        <p class="text-[11px] text-neutral-400 mt-1">Προεπιλογή: τα 2 πρώτα γράμματα του ονόματος + τα 3 πρώτα του επιθέτου. Μπορείτε να το αλλάξετε χειροκίνητα.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-800 mb-1">Password *</label>
+                            <input type="text" id="new-user-password" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-800 mb-1">Email</label>
+                            <input type="email" id="new-user-email" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-800 mb-1">Τμήμα</label>
+                        <select id="new-user-department" class="w-full p-2.5 border border-neutral-300 bg-white rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
+                            <option value="">Επιλέξτε τμήμα...</option>
+                            <option value="ATHENS BRANCH">ATHENS BRANCH</option>
+                            <option value="CNC">CNC</option>
+                            <option value="CONSTRUCTIONS AND NEW PROJECTS">CONSTRUCTIONS AND NEW PROJECTS</option>
+                            <option value="DIES">DIES</option>
+                            <option value="DIES CONSTRUCTION">DIES CONSTRUCTION</option>
+                            <option value="DIGITAL SERVICES">DIGITAL SERVICES</option>
+                            <option value="DOMESTIC SALES">DOMESTIC SALES</option>
+                            <option value="EXTRUSION">EXTRUSION</option>
+                            <option value="FINANCE">FINANCE</option>
+                            <option value="HR">HR</option>
+                            <option value="INTERNATIONAL SALES">INTERNATIONAL SALES</option>
+                            <option value="IT">IT</option>
+                            <option value="LOGISTICS">LOGISTICS</option>
+                            <option value="MAINTENANCE">MAINTENANCE</option>
+                            <option value="MARKETING">MARKETING</option>
+                            <option value="PACKAGING">PACKAGING</option>
+                            <option value="PAINT">PAINT</option>
+                            <option value="PROCUREMENT">PROCUREMENT</option>
+                            <option value="PRODUCT MANAGEMENT">PRODUCT MANAGEMENT</option>
+                            <option value="PRODUCTION BOARD">PRODUCTION BOARD</option>
+                            <option value="PRODUCTION PLANNING">PRODUCTION PLANNING</option>
+                            <option value="PROJECTS">PROJECTS</option>
+                            <option value="QUALITY">QUALITY</option>
+                            <option value="R&D ARCHITECTURAL SYSTEMS">R&D ARCHITECTURAL SYSTEMS</option>
+                            <option value="R&D INDUSTRIAL PROFILES">R&D INDUSTRIAL PROFILES</option>
+                            <option value="Άλλο...">Άλλο...</option>
+                        </select>
+                    </div>
+
+                    <div id="new-user-privileges-field">
+                        <label class="block text-xs font-bold text-neutral-800 mb-2">Δικαιώματα</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="new-user-privileges" value="admin" class="w-4 h-4 accent-black">
+                                <span class="text-sm font-medium text-neutral-800">Admin</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="new-user-privileges" value="user" checked class="w-4 h-4 accent-black">
+                                <span class="text-sm font-medium text-neutral-800">Χρήστης</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-neutral-200 mt-2">
+                    <button onclick="submitCreateUser()" class="bg-black hover:bg-neutral-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all">
+                        Καταχώρηση Νέου Χρήστη
+                    </button>
+                </div>
+            </div>
+        </div>
 
     <!-- ================= MAIN APP WRAPPER ================= -->
     <div id="app-wrapper" class="hidden flex flex-col min-h-screen">
@@ -196,7 +289,7 @@
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                         <div>
-                            <p class="text-green-700 font-semibold">Ημερομηνία Ολοκλήρωσης</p>
+                            <p class="text-green-700 font-semibold">Ημερομηνία</p>
                             <p class="text-green-900 font-bold" id="completion-date-display">—</p>
                         </div>
                         <div>
@@ -281,6 +374,7 @@
                         <div>
                             <h3 class="text-lg font-bold text-neutral-900" id="list-title">Καταγεγραμμένες Διαδικασίες</h3>
                             <p class="text-xs text-neutral-500" id="list-subtitle">Διαχειριστείτε, επεξεργαστείτε και εξάγετε τις αποθηκευμένες ροές σας.</p>
+                            <button id="user-sync-refresh-btn" onclick="syncFromGoogleSheets(); syncCompletionsFromGoogleSheets();" class="hidden text-xs font-bold text-neutral-500 underline hover:text-neutral-900 mt-1">Ανανέωση</button>
                         </div>
                         <div class="flex items-center gap-3 w-full sm:w-auto">
                             <div class="relative max-w-xs w-full">
@@ -331,8 +425,8 @@
                             <button onclick="saveCurrentProcess()" class="bg-neutral-100 text-neutral-800 hover:bg-neutral-200 border border-neutral-200 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center">
                                 <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Προσωρινή Αποθήκευση
                             </button>
-                            <button onclick="exitToDashboard()" class="bg-neutral-900 hover:bg-neutral-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all">
-                                Έξοδος
+                            <button onclick="openExitConfirmModal()" class="bg-neutral-900 hover:bg-neutral-800 text-white px-3 py-2 rounded-xl text-xs font-bold transition-all">
+                                Κεντρική σελίδα
                             </button>
                         </div>
                     </div>
@@ -814,7 +908,11 @@
                             <h2 class="text-xl font-extrabold text-neutral-900 mt-1">Κονσόλα Διαχείρισης</h2>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="showView('user-management')" class="bg-neutral-900 hover:bg-neutral-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-users-gear text-xs"></i>
+                            <span>Διαχείριση Χρηστών</span>
+                        </button>
                         <button onclick="openCreateUserModal()" class="bg-neutral-900 hover:bg-neutral-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
                             <i class="fa-solid fa-user-plus text-xs"></i>
                             <span>Δημιουργία Χρήστη</span>
@@ -831,15 +929,6 @@
                             <i class="fa-solid fa-file-excel text-xs"></i>
                             <span>Λήψη Ολοκληρωμένων Διαδικασιών</span>
                         </button>
-                        <button onclick="document.getElementById('excel-import-input').click()" class="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-file-import text-xs"></i>
-                            <span>Εισαγωγή από Excel</span>
-                        </button>
-                        <button onclick="exportAllProcessesToExcel()" class="bg-black hover:bg-neutral-800 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-floppy-disk text-xs"></i>
-                            <span>Αποθήκευση Όλων στο Excel</span>
-                        </button>
-                        <input type="file" id="excel-import-input" accept=".xlsx,.xls" class="hidden" onchange="importProcessesFromExcelFile(this.files[0]); this.value = '';">
                     </div>
                 </div>
 
@@ -941,6 +1030,50 @@
                             <tbody id="completions-report-table-body"></tbody>
                         </table>
                         <p id="completions-report-empty" class="hidden text-center text-xs text-neutral-400 font-semibold py-6">Δεν έχει δηλωθεί ολοκλήρωση από κανέναν χρήστη ακόμα.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= USER MANAGEMENT VIEW ================= -->
+            <div id="view-user-management" class="hidden space-y-6 no-print">
+                <div class="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="showView('admin-console')" class="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 p-2 rounded-xl transition-all">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <div>
+                            <span class="bg-neutral-100 text-neutral-800 border border-neutral-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Admin</span>
+                            <h2 class="text-xl font-extrabold text-neutral-900 mt-1">Διαχείριση Χρηστών</h2>
+                        </div>
+                    </div>
+                    <button onclick="loadUsersFromGoogleSheets().then(renderUserManagement)" class="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate text-xs"></i>
+                        <span>Ανανέωση</span>
+                    </button>
+                </div>
+
+                <div class="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b-2 border-neutral-200 text-left">
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider"></th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">User ID</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Όνομα</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Επίθετο</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Username</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Password</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Email</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Τμήμα</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Connected</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Last Connected</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Δικαιώματα</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Ημ. Δημιουργίας</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-management-table-body"></tbody>
+                        </table>
+                        <p id="user-management-empty" class="hidden text-center text-xs text-neutral-400 font-semibold py-6">Δεν βρέθηκαν χρήστες.</p>
                     </div>
                 </div>
             </div>
@@ -1074,6 +1207,42 @@
             </div>
         </div>
 
+        <!-- Exit-to-Dashboard Confirmation Modal -->
+        <div id="exit-confirm-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-neutral-100 animate-fadeIn space-y-4">
+                <div class="text-center space-y-2">
+                    <div class="bg-neutral-100 text-black w-12 h-12 rounded-full flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-neutral-900">Κεντρική Σελίδα</h3>
+                    <p class="text-xs text-neutral-600 leading-relaxed font-semibold">
+                        Θα μεταφερθείτε στην κεντρική σελίδα. Τι θέλετε να κάνετε με την διαδικασία που επεξεργάζεστε;
+                    </p>
+                </div>
+                <div class="space-y-2 pt-2">
+                    <button onclick="handleExitSave()" class="w-full py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+                        Αποθήκευση
+                    </button>
+                    <button onclick="handleExitDelete()" class="w-full py-2.5 bg-white border border-red-300 text-red-700 rounded-xl text-xs font-bold hover:bg-red-50 transition-all">
+                        Διαγραφή
+                    </button>
+                    <button onclick="handleExitBack()" class="w-full py-2.5 bg-white border border-neutral-300 text-black rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all">
+                        Πίσω
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exit-flow result message (auto-dismisses back to dashboard) -->
+        <div id="exit-result-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-neutral-100 animate-fadeIn text-center space-y-3">
+                <div id="exit-result-icon" class="bg-neutral-100 text-black w-12 h-12 rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <p id="exit-result-message" class="text-xs text-neutral-700 leading-relaxed font-semibold"></p>
+            </div>
+        </div>
+
         <!-- Logout Confirmation Modal -->
         <div id="logout-confirm-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
             <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-neutral-100 animate-fadeIn space-y-4">
@@ -1093,6 +1262,29 @@
                     </button>
                     <button onclick="handleLogout()" class="w-1/2 py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
                         Αποσύνδεση
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete User Confirmation Modal -->
+        <div id="delete-user-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-4 shadow-xl border border-neutral-100 animate-fadeIn space-y-4">
+                <div class="text-center space-y-2">
+                    <div class="bg-neutral-100 text-black w-12 h-12 rounded-full flex items-center justify-center mx-auto text-xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-neutral-900">Διαγραφή Χρήστη</h3>
+                    <p class="text-xs text-neutral-600 leading-relaxed font-semibold">
+                        Είστε σίγουρος ότι θέλετε να διαγράψετε αυτόν τον χρήστη. Η διαγραφή είναι οριστική και μη αναστρέψιμη.
+                    </p>
+                </div>
+                <div class="flex items-center space-x-3 pt-2">
+                    <button onclick="closeDeleteUserModal()" class="w-1/2 py-2.5 border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all">
+                        Ακύρωση
+                    </button>
+                    <button onclick="confirmDeleteUser()" class="w-1/2 py-2.5 bg-black text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+                        Διαγραφή
                     </button>
                 </div>
             </div>
@@ -1148,102 +1340,6 @@
             </div>
         </div>
 
-        <div id="create-user-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-            <div class="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl border border-neutral-100 animate-fadeIn flex flex-col max-h-[90vh]">
-                <div class="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-user-plus text-neutral-700"></i>
-                        <h3 class="text-base font-bold text-neutral-900">Δημιουργία Χρήστη</h3>
-                    </div>
-                    <button onclick="closeCreateUserModal()" class="text-neutral-400 hover:text-neutral-900 p-1 rounded-lg transition-all">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-4 py-2 overflow-y-auto pr-1 flex-grow">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-neutral-800 mb-1">Όνομα *</label>
-                            <input type="text" id="new-user-name" oninput="updateNewUserUsernamePreview()" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-neutral-800 mb-1">Επίθετο *</label>
-                            <input type="text" id="new-user-surname" oninput="updateNewUserUsernamePreview()" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-neutral-800 mb-1">Username</label>
-                        <input type="text" id="new-user-username" placeholder="Συμπληρώνεται αυτόματα — μπορείτε να το αλλάξετε" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                        <p class="text-[11px] text-neutral-400 mt-1">Προεπιλογή: τα 2 πρώτα γράμματα του ονόματος + τα 3 πρώτα του επιθέτου. Μπορείτε να το αλλάξετε χειροκίνητα.</p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-neutral-800 mb-1">Password *</label>
-                            <input type="text" id="new-user-password" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-neutral-800 mb-1">Email</label>
-                            <input type="email" id="new-user-email" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-neutral-800 mb-1">Τμήμα</label>
-                        <select id="new-user-department" class="w-full p-2.5 border border-neutral-300 bg-white rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none">
-                            <option value="">Επιλέξτε τμήμα...</option>
-                            <option value="ATHENS BRANCH">ATHENS BRANCH</option>
-                            <option value="CNC">CNC</option>
-                            <option value="CONSTRUCTIONS AND NEW PROJECTS">CONSTRUCTIONS AND NEW PROJECTS</option>
-                            <option value="DIES">DIES</option>
-                            <option value="DIES CONSTRUCTION">DIES CONSTRUCTION</option>
-                            <option value="DIGITAL SERVICES">DIGITAL SERVICES</option>
-                            <option value="DOMESTIC SALES">DOMESTIC SALES</option>
-                            <option value="EXTRUSION">EXTRUSION</option>
-                            <option value="FINANCE">FINANCE</option>
-                            <option value="HR">HR</option>
-                            <option value="INTERNATIONAL SALES">INTERNATIONAL SALES</option>
-                            <option value="IT">IT</option>
-                            <option value="LOGISTICS">LOGISTICS</option>
-                            <option value="MAINTENANCE">MAINTENANCE</option>
-                            <option value="MARKETING">MARKETING</option>
-                            <option value="PACKAGING">PACKAGING</option>
-                            <option value="PAINT">PAINT</option>
-                            <option value="PROCUREMENT">PROCUREMENT</option>
-                            <option value="PRODUCT MANAGEMENT">PRODUCT MANAGEMENT</option>
-                            <option value="PRODUCTION BOARD">PRODUCTION BOARD</option>
-                            <option value="PRODUCTION PLANNING">PRODUCTION PLANNING</option>
-                            <option value="PROJECTS">PROJECTS</option>
-                            <option value="QUALITY">QUALITY</option>
-                            <option value="R&D ARCHITECTURAL SYSTEMS">R&D ARCHITECTURAL SYSTEMS</option>
-                            <option value="R&D INDUSTRIAL PROFILES">R&D INDUSTRIAL PROFILES</option>
-                            <option value="Άλλο...">Άλλο...</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-neutral-800 mb-2">Δικαιώματα</label>
-                        <div class="flex items-center space-x-6">
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="radio" name="new-user-privileges" value="admin" class="w-4 h-4 accent-black">
-                                <span class="text-sm font-medium text-neutral-800">Admin</span>
-                            </label>
-                            <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="radio" name="new-user-privileges" value="user" checked class="w-4 h-4 accent-black">
-                                <span class="text-sm font-medium text-neutral-800">Χρήστης</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end pt-4 border-t border-neutral-200 mt-2">
-                    <button onclick="submitCreateUser()" class="bg-black hover:bg-neutral-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all">
-                        Καταχώρηση Νέου Χρήστη
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <!-- Footer -->
         <footer class="bg-white border-t border-neutral-200 py-6 mt-12 no-print">
@@ -1280,7 +1376,7 @@
         // Default Google Apps Script Web App URL. Used the first time the app runs
         // (before an admin has saved a different link in Settings). The admin can
         // always override this from the gear icon -> Settings modal.
-        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxxAORXZYhcHniJgFqrttM19dQHuM-UhpFF2iGwVo2BhvFId8-oLQGagz55cbU5pteU/exec";
+        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxTdFvyUt6SA4RIGR2Ws_neNT5xNPcP93VKgyiOAvzOgAeoTsiKFfmkOmh454t3HaPa/exec";
 
         // Fallback users if the Google Sheets "Users" tab can't be reached
         // (e.g. offline, or Sheets integration briefly down) — keeps login
@@ -1578,7 +1674,7 @@
         // mode is used on the underlying sync calls so no separate toasts
         // stack on top of the overlay.
         async function performLoginSync() {
-            const ownCountSoFar = loggedUser ? processes.filter(p => p.createdBy === loggedUser.username).length : 0;
+            const ownCountSoFar = loggedUser ? getVisibleProcesses().filter(p => p.createdBy === loggedUser.username).length : 0;
             showSyncOverlay(`Συγχρονισμός των δεδομένων σας (${ownCountSoFar} διαδικασίες).\nΠαρακαλώ περιμένετε......`);
 
             const [processResult, completionsResult] = await Promise.all([
@@ -1624,6 +1720,8 @@
             const dateAnalystInput = document.getElementById('field-val-date-analyst');
             const adminConsoleBtn = document.getElementById('btn-admin-console');
             const markCompletedBtn = document.getElementById('btn-mark-completed');
+            const sheetsBanner = document.getElementById('sheets-status-banner');
+            const userSyncBtn = document.getElementById('user-sync-refresh-btn');
             
             if (loggedUser.role === 'admin') {
                 lockOverlay.classList.add('hidden');
@@ -1634,6 +1732,13 @@
                 dateAnalystInput.classList.remove('bg-neutral-100', 'cursor-not-allowed', 'text-neutral-400');
                 adminConsoleBtn.classList.remove('hidden');
                 markCompletedBtn.classList.add('hidden');
+
+                // The Google-Sheets connection status banner is admin-facing
+                // infrastructure info — only admins see it (item 2).
+                if (GOOGLE_SHEETS_ENABLED && sheetsBanner.innerHTML.trim() !== '') {
+                    sheetsBanner.classList.remove('hidden');
+                }
+                userSyncBtn.classList.add('hidden');
             } else {
                 lockOverlay.classList.remove('hidden');
                 document.getElementById('list-title').innerText = `Οι Διαδικασίες μου (${loggedUser.username})`;
@@ -1643,6 +1748,11 @@
                 dateAnalystInput.classList.add('bg-neutral-100', 'cursor-not-allowed', 'text-neutral-400');
                 adminConsoleBtn.classList.add('hidden');
                 markCompletedBtn.classList.remove('hidden');
+
+                // Regular users don't see the Sheets status banner (item 2) —
+                // they get a plain "Ανανέωση" link instead (item 3).
+                sheetsBanner.classList.add('hidden');
+                userSyncBtn.classList.remove('hidden');
             }
 
             // Stats (including "Τελευταία Σύνδεση") otherwise only refresh
@@ -1665,6 +1775,11 @@
         window.saveCurrentProcess = saveCurrentProcess;
         window.submitFinalForm = submitFinalForm;
         window.exitToDashboard = exitToDashboard;
+        window.openExitConfirmModal = openExitConfirmModal;
+        window.closeExitConfirmModal = closeExitConfirmModal;
+        window.handleExitBack = handleExitBack;
+        window.handleExitSave = handleExitSave;
+        window.handleExitDelete = handleExitDelete;
         window.viewProcessDetails = viewProcessDetails;
         window.printProcess = printProcess;
         window.printAllProcesses = printAllProcesses;
@@ -1682,6 +1797,11 @@
         window.openCreateUserModal = openCreateUserModal;
         window.updateNewUserUsernamePreview = updateNewUserUsernamePreview;
         window.submitCreateUser = submitCreateUser;
+        window.loadUsersFromGoogleSheets = loadUsersFromGoogleSheets;
+        window.renderUserManagement = renderUserManagement;
+        window.openDeleteUserModal = openDeleteUserModal;
+        window.closeDeleteUserModal = closeDeleteUserModal;
+        window.confirmDeleteUser = confirmDeleteUser;
         window.closeDeptCodesModal = closeDeptCodesModal;
         window.resetToFullList = resetToFullList;
         window.closeDeleteModal = closeDeleteModal;
@@ -1713,11 +1833,6 @@
         window.addEventListener('load', () => {
             initGoogleSheetsConfig();
             loadUsersFromGoogleSheets();
-            
-            if (window.location.protocol === 'file:') {
-                const warningEl = document.getElementById('local-file-warning');
-                if (warningEl) warningEl.classList.remove('hidden');
-            }
 
             document.getElementById('field-current-date').addEventListener('change', () => {
                 document.getElementById('field-val-date-stakeholder').value = document.getElementById('field-current-date').value;
@@ -1730,6 +1845,7 @@
             document.getElementById('view-details').classList.add('hidden');
             document.getElementById('view-admin-console').classList.add('hidden');
             document.getElementById('view-completions-report').classList.add('hidden');
+            document.getElementById('view-user-management').classList.add('hidden');
 
             document.getElementById(`view-${viewId}`).classList.remove('hidden');
             if (viewId === 'admin-console') {
@@ -1744,6 +1860,13 @@
             }
             if (viewId === 'completions-report') {
                 renderCompletionsReport();
+            }
+            if (viewId === 'user-management') {
+                if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
+                    loadUsersFromGoogleSheets().then(renderUserManagement);
+                } else {
+                    renderUserManagement();
+                }
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1769,10 +1892,13 @@
             document.getElementById('process-form').reset();
             document.getElementById('flow-rows-container').innerHTML = '';
             
-            // Pre-fill the requester's name and department from their most recent
-            // process (if any), so returning users don't have to retype them —
-            // both stay fully editable.
-            const ownNamedRecords = processes.filter(p => p.createdBy === loggedUser?.username && (p.valFirstname || p.valLastname || p.a3));
+            // Pre-fill the requester's name and department: prefer what's on
+            // record for them in the Users sheet (item 25); fall back to
+            // their most recent process (if any) when the Users record
+            // doesn't have that field filled in. Always stays fully editable.
+            const matchedSheetUser = users.find(u => (u.username || '').toLowerCase() === (loggedUser?.username || '').toLowerCase());
+
+            const ownNamedRecords = getVisibleProcesses().filter(p => p.createdBy === loggedUser?.username && (p.valFirstname || p.valLastname || p.a3));
             let lastKnownName = null;
             let lastKnownDept = null;
             ownNamedRecords.forEach((p) => {
@@ -1785,7 +1911,10 @@
                 }
             });
 
-            if (lastKnownName) {
+            if (matchedSheetUser && (matchedSheetUser.name || matchedSheetUser.surname)) {
+                document.getElementById('field-val-firstname').value = matchedSheetUser.name || '';
+                document.getElementById('field-val-lastname').value = matchedSheetUser.surname || '';
+            } else if (lastKnownName) {
                 document.getElementById('field-val-firstname').value = lastKnownName.firstname;
                 document.getElementById('field-val-lastname').value = lastKnownName.lastname;
             } else if (loggedUser && loggedUser.username !== 'Admin') {
@@ -1800,7 +1929,8 @@
             document.getElementById('field-current-date').value = todayStr;
             document.getElementById('field-val-date-stakeholder').value = todayStr; 
             document.getElementById('field-val-date-analyst').value = ''; 
-            document.getElementById('field-a3').value = lastKnownDept ? lastKnownDept.department : '';
+            const defaultDept = (matchedSheetUser && matchedSheetUser.department) ? matchedSheetUser.department : (lastKnownDept ? lastKnownDept.department : '');
+            document.getElementById('field-a3').value = defaultDept;
 
             addFlowRow();
 
@@ -1885,7 +2015,10 @@
             }
         }
 
-        function openCreateUserModal() {
+        let createUserSelfService = false;
+
+        function openCreateUserModal(selfService = false) {
+            createUserSelfService = selfService;
             document.getElementById('new-user-name').value = '';
             document.getElementById('new-user-surname').value = '';
             document.getElementById('new-user-username').value = '';
@@ -1894,6 +2027,11 @@
             document.getElementById('new-user-email').value = '';
             document.getElementById('new-user-department').value = '';
             document.querySelector('input[name="new-user-privileges"][value="user"]').checked = true;
+
+            // Self-service (login screen): anyone creating their own account
+            // can only ever create a regular "user" — no admin/user choice.
+            document.getElementById('new-user-privileges-field').classList.toggle('hidden', selfService);
+
             document.getElementById('create-user-modal').classList.remove('hidden');
         }
 
@@ -1908,7 +2046,7 @@
             const password = document.getElementById('new-user-password').value;
             const email = document.getElementById('new-user-email').value.trim();
             const department = document.getElementById('new-user-department').value;
-            const privileges = document.querySelector('input[name="new-user-privileges"]:checked').value;
+            const privileges = createUserSelfService ? 'user' : document.querySelector('input[name="new-user-privileges"]:checked').value;
 
             if (!name || !surname || !password) {
                 showNotification("Συμπληρώστε τουλάχιστον Όνομα, Επίθετο και Password.", "error");
@@ -1934,31 +2072,109 @@
                 })
             }).catch((err) => console.error("Error creating user in Google Sheets:", err));
 
-            showNotification(`Ο χρήστης "${username}" καταχωρήθηκε.`, "success");
+            showNotification(`Ο χρήστης "${username}" καταχωρήθηκε. Μπορείτε να συνδεθείτε τώρα.`, "success");
             closeCreateUserModal();
-            showView('dashboard');
+            if (!createUserSelfService) {
+                showView('dashboard');
+            }
 
             // Refresh the user directory shortly after, so the new account
             // can log in without anyone needing to reload the page manually.
             setTimeout(() => { loadUsersFromGoogleSheets(); }, 1500);
         }
 
+        let deleteUserTargetUserId = null;
+
+        // Renders the full "Users" sheet as a table, one row per user, with
+        // a trash icon on the left of each row to delete that user.
+        function renderUserManagement() {
+            const body = document.getElementById('user-management-table-body');
+            const empty = document.getElementById('user-management-empty');
+
+            if (!users || users.length === 0) {
+                body.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            body.innerHTML = users.map((u) => `
+                <tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-all">
+                    <td class="p-2.5 text-center">
+                        <button onclick="openDeleteUserModal('${u.userid}')" class="text-neutral-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-all" title="Διαγραφή Χρήστη">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </td>
+                    <td class="p-2.5 font-mono font-bold text-neutral-800 whitespace-nowrap">${u.userid || '—'}</td>
+                    <td class="p-2.5 text-neutral-700">${u.name || '—'}</td>
+                    <td class="p-2.5 text-neutral-700">${u.surname || '—'}</td>
+                    <td class="p-2.5 font-bold text-neutral-800 whitespace-nowrap">${u.username || '—'}</td>
+                    <td class="p-2.5 text-neutral-500 font-mono">${u.password || '—'}</td>
+                    <td class="p-2.5 text-neutral-600">${u.email || '—'}</td>
+                    <td class="p-2.5 text-neutral-600 whitespace-nowrap">${u.department || '—'}</td>
+                    <td class="p-2.5 text-neutral-500 whitespace-nowrap">${u.connected || '—'}</td>
+                    <td class="p-2.5 text-neutral-500 whitespace-nowrap">${u.lastconnected || '—'}</td>
+                    <td class="p-2.5 whitespace-nowrap">
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${String(u.privileges).toLowerCase() === 'admin' ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-700 border border-neutral-200'}">${u.privileges || 'user'}</span>
+                    </td>
+                    <td class="p-2.5 text-neutral-500 whitespace-nowrap">${u.dateCreated || '—'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function openDeleteUserModal(userid) {
+            deleteUserTargetUserId = userid;
+            document.getElementById('delete-user-modal').classList.remove('hidden');
+        }
+
+        function closeDeleteUserModal() {
+            deleteUserTargetUserId = null;
+            document.getElementById('delete-user-modal').classList.add('hidden');
+        }
+
+        function confirmDeleteUser() {
+            if (!deleteUserTargetUserId) return;
+            const userid = deleteUserTargetUserId;
+
+            if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
+                fetch(googleSheetsUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'deleteUser', userid: userid })
+                }).catch((err) => console.error("Error deleting user from Google Sheets:", err));
+            }
+
+            // Optimistic local removal — the row below shifts up visually
+            // right away instead of waiting for a full re-sync.
+            users = users.filter(u => u.userid !== userid);
+            renderUserManagement();
+            closeDeleteUserModal();
+            showNotification("Ο χρήστης διαγράφηκε.", "success");
+        }
+
         // Reads the next sequence number for a department WITHOUT consuming it —
         // used for the live preview while the form is still being filled in, so
         // just looking at / changing the department dropdown never burns a number.
-        function peekDeptSequence(deptCode) {
-            const current = parseInt(localStorage.getItem('dept_seq_' + deptCode) || '0', 10);
-            return String(current).padStart(5, '0');
-        }
-
-        // Permanently consumes (increments) the next sequence number for a
-        // department. Only called once a process is actually saved for the
-        // first time — every real save from then on reuses the same locked-in
-        // code instead of consuming a new number.
-        function consumeDeptSequence(deptCode) {
-            const current = parseInt(localStorage.getItem('dept_seq_' + deptCode) || '0', 10);
-            localStorage.setItem('dept_seq_' + deptCode, String(current + 1));
-            return String(current).padStart(5, '0');
+        // Computes the next code for a department by scanning ALL known
+        // processes (including soft-deleted ones — their numbers must never
+        // be reused) for the highest existing number under that department's
+        // 3-letter prefix, then returning max+1. No persistent counter is
+        // stored anywhere; this always reflects whatever's currently known
+        // (including anything synced in from Google Sheets), which is what
+        // keeps numbering consistent across different computers/browsers.
+        function computeNextDeptCode(deptValue) {
+            const deptCode = deptCodeFor(deptValue);
+            let maxNum = -1;
+            processes.forEach((p) => {
+                if (p.a1 && p.a1.indexOf(deptCode) === 0) {
+                    const suffix = p.a1.substring(deptCode.length);
+                    const num = parseInt(suffix, 10);
+                    if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+            });
+            const nextNum = maxNum + 1;
+            return `${deptCode}${String(nextNum).padStart(6, '0')}`;
         }
 
         function updateProcessCode() {
@@ -1981,12 +2197,12 @@
 
             // If this process already has a locked-in code for this exact
             // department (i.e. it was already saved once), keep showing that —
-            // don't preview/consume a new number for an already-saved process.
+            // don't preview/assign a new number for an already-saved process.
             let previewCode;
             if (currentProcess && currentProcess.a3 === deptValue && currentProcess.a1 && currentProcess.a1.startsWith(deptCode)) {
                 previewCode = currentProcess.a1;
             } else {
-                previewCode = `${deptCode}${peekDeptSequence(deptCode)}`;
+                previewCode = computeNextDeptCode(deptValue);
             }
 
             document.getElementById('field-a1').value = previewCode;
@@ -1995,8 +2211,8 @@
 
         // Locks in the real process code right before an actual save: reuses
         // the existing code if this process was already saved under the same
-        // department, otherwise consumes (and permanently increments) the
-        // next number in that department's sequence.
+        // department, otherwise assigns the next available number (freshest
+        // scan, in case something changed since the preview was shown).
         function lockInProcessCode() {
             const deptValue = document.getElementById('field-a3').value;
             if (!deptValue) return;
@@ -2008,7 +2224,7 @@
             if (currentProcess && currentProcess.a3 === deptValue && currentProcess.a1 && currentProcess.a1.startsWith(deptCode)) {
                 finalCode = currentProcess.a1;
             } else {
-                finalCode = `${deptCode}${consumeDeptSequence(deptCode)}`;
+                finalCode = computeNextDeptCode(deptValue);
             }
 
             document.getElementById('field-a1').value = finalCode;
@@ -2636,6 +2852,13 @@
                 });
             }
 
+            // "Created by" must never change once a process exists — even
+            // when an admin is the one editing/saving it. Only a brand-new
+            // process (no existing record for activeProcessId) gets
+            // attributed to whoever is currently logged in.
+            const existingProcess = processes.find(p => p.id === activeProcessId);
+            const createdByValue = existingProcess ? existingProcess.createdBy : (loggedUser ? loggedUser.username : 'Anonymous');
+
             return {
                 a1: document.getElementById('field-a1').value || '—',
                 a2: document.getElementById('field-a2').value || 'Νέα Διαδικασία',
@@ -2670,17 +2893,35 @@
                 valFirstname: document.getElementById('field-val-firstname').value || 'Ozzy',
                 valLastname: document.getElementById('field-val-lastname').value || 'Osbourne',
                 currentDate: document.getElementById('field-current-date').value || '',
-                createdBy: loggedUser ? loggedUser.username : 'Anonymous', 
+                createdBy: createdByValue, 
                 updatedAt: new Date().toISOString()
             };
+        }
+
+        // If the analyst picked a validation date (field-val-date-analyst),
+        // that value is always kept as-is — getFormData() already reads it.
+        // If they didn't, but filled in anything in Ενότητα Ε, auto-fill
+        // today's date so the validation date is never silently left blank
+        // when there's clearly been analyst activity (item 2).
+        function applyAnalystDateAutofill(data) {
+            if (data.valDateAnalyst) return;
+            const hasAnalystNotes = ['e1', 'e2', 'e3', 'e4', 'e5', 'e6'].some(k => data[k] && data[k] !== '—');
+            if (hasAnalystNotes) {
+                data.valDateAnalyst = new Date().toISOString().split('T')[0];
+            }
         }
 
         async function saveCurrentProcess() {
             lockInProcessCode();
             const data = getFormData();
+            applyAnalystDateAutofill(data);
             data.status = 'draft'; // "Αποθήκευση" (not final submission) = still a draft
             const id = activeProcessId || 'doc_' + Date.now();
             const oldProcessForRevision = processes.find(p => p.id === id);
+            // Temp saves never touch "admin check" — that's only computed on
+            // Οριστική Υποβολή (or set manually via the checkbox), so keep
+            // whatever value the process already had.
+            data.adminCheck = oldProcessForRevision ? (oldProcessForRevision.adminCheck || 'not yet') : 'not yet';
             appendRevision(oldProcessForRevision, data);
 
             if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
@@ -2920,6 +3161,18 @@
 
             const data = getFormData();
             data.status = 'completed'; // Οριστική Υποβολή = no longer a draft
+            applyAnalystDateAutofill(data);
+
+            // "Admin Check" (Google Sheets column next to status): becomes
+            // "yes" if, at the moment of Οριστική Υποβολή, the analyst has
+            // filled in anything in Ενότητα Ε or set the 1-on-1 validation
+            // date — otherwise "not yet". Re-evaluated on every final
+            // submission (a manual override via the checkbox can still be
+            // changed independently afterwards).
+            const hasAnalystNotes = ['e1', 'e2', 'e3', 'e4', 'e5', 'e6'].some(k => data[k] && data[k] !== '—');
+            const hasValidationDate = !!data.valDateAnalyst;
+            data.adminCheck = (hasAnalystNotes || hasValidationDate) ? 'yes' : 'not yet';
+
             const id = activeProcessId || 'doc_' + Date.now();
             const oldProcessForRevision = processes.find(p => p.id === id);
             appendRevision(oldProcessForRevision, data);
@@ -2964,6 +3217,75 @@
             showView('dashboard');
         }
 
+        function openExitConfirmModal() {
+            document.getElementById('exit-confirm-modal').classList.remove('hidden');
+        }
+
+        function closeExitConfirmModal() {
+            document.getElementById('exit-confirm-modal').classList.add('hidden');
+        }
+
+        // "Πίσω": no changes, no navigation — just closes this modal and
+        // stays exactly on the form where the user left off.
+        function handleExitBack() {
+            closeExitConfirmModal();
+        }
+
+        function showExitResultModal(message, iconClass, delayMs) {
+            document.getElementById('exit-result-message').innerText = message;
+            document.getElementById('exit-result-icon').innerHTML = `<i class="${iconClass}"></i>`;
+            document.getElementById('exit-result-modal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('exit-result-modal').classList.add('hidden');
+                showView('dashboard');
+            }, delayMs);
+        }
+
+        // "Αποθήκευση": temp-saves the process exactly like the regular
+        // "Αποθήκευση" button, then shows a brief confirmation before
+        // returning to the dashboard.
+        async function handleExitSave() {
+            closeExitConfirmModal();
+            await saveCurrentProcess();
+            showExitResultModal("Η διαδικασία αποθηκεύεται", "fa-solid fa-circle-check", 1400);
+        }
+
+        // "Διαγραφή": discards any unsaved changes in the open form (never
+        // saves them), and if this process had already been saved at some
+        // point (activeProcessId is set), permanently removes it — locally
+        // and from Google Sheets.
+        async function handleExitDelete() {
+            closeExitConfirmModal();
+            const id = activeProcessId;
+
+            if (id) {
+                const targetProcess = processes.find(p => p.id === id);
+                if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl && targetProcess) {
+                    try {
+                        await fetch(googleSheetsUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({ action: 'delete', id: targetProcess.id, a1: targetProcess.a1 })
+                        });
+                    } catch (error) {
+                        console.error("Error deleting from Google Sheets:", error);
+                    }
+                }
+                if (targetProcess) {
+                    targetProcess.status = 'deleted';
+                }
+                saveLocalBackup();
+            }
+            activeProcessId = null;
+
+            showExitResultModal(
+                'Η διαδικασία έχει διαγραφεί με επιτυχία. Κάντε κλικ στο κουμπί "+ Νέα Διαδικασία" για να ξεκινήσετε την συμπλήρωση μιας νέας',
+                "fa-solid fa-trash-can",
+                2400
+            );
+        }
+
         function updateStats() {
             const list = getFilteredProcessList();
             
@@ -2977,7 +3299,7 @@
 
             const heroLabel = document.getElementById('btn-hero-start-label');
             if (heroLabel) {
-                const ownProcessCount = loggedUser ? processes.filter(p => p.createdBy === loggedUser.username).length : 0;
+                const ownProcessCount = loggedUser ? getVisibleProcesses().filter(p => p.createdBy === loggedUser.username).length : 0;
                 heroLabel.innerText = ownProcessCount > 0 ? "+ Νέα Διαδικασία" : "Ξεκινήστε Τώρα";
             }
         }
@@ -3031,7 +3353,7 @@
         function markAllProcessesCompleted() {
             if (!loggedUser) return;
 
-            const ownRecords = processes.filter(p => p.createdBy === loggedUser.username);
+            const ownRecords = getVisibleProcesses().filter(p => p.createdBy === loggedUser.username);
             const completedCount = ownRecords.filter(p => p.status === 'completed').length;
 
             // Best-effort department / full name from the user's most recent record.
@@ -3204,7 +3526,7 @@
                 "Επίθετο": p.valLastname || '',
                 "Ημερομηνία Καταγραφής": p.currentDate || '',
                 "Δημιουργός (Username)": p.createdBy || '',
-                "Ελέγχθηκε από Admin": p.adminReviewed ? 'Ναι' : 'Όχι',
+                "Ελέγχθηκε από Admin": p.adminCheck === 'yes' ? 'Ναι' : 'Όχι',
                 "Τελευταία Ενημέρωση": p.updatedAt ? new Date(p.updatedAt).toLocaleString('el-GR') : '',
                 "_RAW_JSON": JSON.stringify(p)
             };
@@ -3230,12 +3552,13 @@
         // this to write everything back out when finished — a full
         // Import → edit → Export round trip.
         function exportAllProcessesToExcel() {
-            if (processes.length === 0) {
+            const visible = getVisibleProcesses();
+            if (visible.length === 0) {
                 showNotification("Δεν υπάρχουν διαδικασίες για αποθήκευση.", "warning");
                 return;
             }
 
-            const rows = processes.map(buildProcessExcelRow);
+            const rows = visible.map(buildProcessExcelRow);
             const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Όλες οι Διαδικασίες");
@@ -3427,7 +3750,7 @@
 
             // --- Departments breakdown: distinct users + total processes per department ---
             const deptMap = {};
-            processes.forEach((p) => {
+            getVisibleProcesses().forEach((p) => {
                 const dept = p.a3 || 'Χωρίς Τμήμα';
                 if (!deptMap[dept]) deptMap[dept] = { users: new Set(), completedUsers: new Set(), total: 0 };
                 if (p.createdBy) {
@@ -3501,12 +3824,22 @@
             return `${datePart} ${timePart}`;
         }
 
+        // Soft-deleted processes (status === 'deleted') are kept in the data
+        // (locally and in Google Sheets) so codes are never reused and
+        // there's an audit trail, but must never be visible to anyone —
+        // user or admin — anywhere in the UI. Every place that reads
+        // `processes` for display/aggregation should go through this.
+        function getVisibleProcesses() {
+            return processes.filter(p => p.status !== 'deleted');
+        }
+
         function getFilteredProcessList() {
             if (!loggedUser) return [];
+            const visible = getVisibleProcesses();
             if (loggedUser.role === 'admin') {
-                return processes;
+                return visible;
             } else {
-                return processes.filter(p => p.createdBy === loggedUser.username);
+                return visible.filter(p => p.createdBy === loggedUser.username);
             }
         }
 
@@ -3621,14 +3954,25 @@
             let rowsHTML = '';
             activeList.forEach((p) => {
                 const fullName = [p.valFirstname, p.valLastname].filter(Boolean).join(' ') || '—';
-                const dateDisplay = p.currentDate || (p.updatedAt ? p.updatedAt.split('T')[0] : '—');
-
-                let critClass = "bg-neutral-100 text-neutral-800";
-                if (p.a11 === "Υψηλή") critClass = "bg-neutral-900 text-white border border-neutral-800";
-                else if (p.a11 === "Μέση") critClass = "bg-neutral-200 text-neutral-800 border border-neutral-300";
+                // DD/MM/YYYY - HH:MM (24h) from the real save timestamp; falls
+                // back to the date-only field if there's no timestamp yet.
+                let dateDisplay = '—';
+                if (p.updatedAt) {
+                    const d = new Date(p.updatedAt);
+                    if (!isNaN(d)) {
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                        const yyyy = d.getFullYear();
+                        const hh = String(d.getHours()).padStart(2, '0');
+                        const min = String(d.getMinutes()).padStart(2, '0');
+                        dateDisplay = `${dd}/${mm}/${yyyy} : ${hh}:${min}`;
+                    }
+                } else if (p.currentDate) {
+                    dateDisplay = p.currentDate;
+                }
 
                 const isDraft = p.status === 'draft';
-                const isReviewed = !!p.adminReviewed;
+                const isReviewed = p.adminCheck === 'yes';
                 const rowBgClass = isReviewed ? '' : ' bg-amber-50';
 
                 rowsHTML += `
@@ -3648,9 +3992,6 @@
                             ${isDraft
                                 ? '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">Πρόχειρο</span>'
                                 : '<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">Ολοκληρωμένη</span>'}
-                        </td>
-                        <td class="p-3">
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${critClass}">${p.a11 || 'Χαμηλή'}</span>
                         </td>
                         <td class="p-3 text-right whitespace-nowrap">
                             ${isDraft
@@ -3693,7 +4034,6 @@
                             <th class="p-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Ονομασία Διαδικασίας</th>
                             <th class="p-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Χρήστης</th>
                             <th class="p-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Κατάσταση</th>
-                            <th class="p-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Κρισιμότητα</th>
                             <th class="p-3 text-[10px] font-bold text-neutral-500 uppercase tracking-wider text-right">Ενέργειες</th>
                         </tr>
                     </thead>
@@ -4185,8 +4525,20 @@
         function markProcessReviewed(id, checkboxEl) {
             const p = processes.find(proc => proc.id === id);
             if (!p) return;
-            p.adminReviewed = checkboxEl ? checkboxEl.checked : true;
+            p.adminCheck = (checkboxEl ? checkboxEl.checked : true) ? 'yes' : 'not yet';
             saveLocalBackup();
+
+            // The admin can change this status any time, independent of
+            // saving/submitting the process — push it to the Sheet
+            // immediately so it's remembered on next login (item 18).
+            if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
+                fetch(googleSheetsUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(p)
+                }).catch((err) => console.error("Error updating admin check in Google Sheets:", err));
+            }
         }
 
         function duplicateProcess(id) {
@@ -4203,7 +4555,7 @@
 
             const deptValue = original.a3;
             const newCode = (deptValue && deptValue !== '—')
-                ? `${deptCodeFor(deptValue)}${consumeDeptSequence(deptCodeFor(deptValue))}`
+                ? computeNextDeptCode(deptValue)
                 : original.a1;
 
             const now = new Date();
@@ -4212,6 +4564,7 @@
                 id: 'doc_' + Date.now(),
                 a1: newCode,
                 status: 'draft',
+                adminCheck: 'not yet',
                 createdBy: loggedUser ? loggedUser.username : original.createdBy,
                 updatedAt: now.toISOString(),
                 revisions: [{
@@ -4283,7 +4636,10 @@
         }
 
         function deleteLocalOffline(id) {
-            processes = processes.filter(p => p.id !== id);
+            const p = processes.find(proc => proc.id === id);
+            if (p) {
+                p.status = 'deleted';
+            }
             saveLocalBackup();
             showNotification("Η διαδικασία διαγράφηκε επιτυχώς.", "success");
         }
