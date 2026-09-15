@@ -1726,6 +1726,7 @@
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Connected</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Last Connected</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Δικαιώματα</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Επιβεβαίωση Email</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Ημ. Δημιουργίας</th>
                                 </tr>
                             </thead>
@@ -2323,7 +2324,7 @@
         // Default Google Apps Script Web App URL. Used the first time the app runs
         // (before an admin has saved a different link in Settings). The admin can
         // always override this from the gear icon -> Settings modal.
-        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbz71HvMnv_CDL77Y71wHlTHp1AmceIsZgdFQ-VP5a7yqLNXNJoMl-eSskJdznADuK4/exec";
+        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzVmJmyi5awcuu1ER_aII_4sQ5ADVn6I9lv8LGvZzFo3JjE2dwxVj_Xj2vte9-J6YWo/exec";
 
         // Link to the PDF user manual (Εγχειρίδιο Χρήσης) — shown in the
         // Help modal and in the process-form instructions sidebar.
@@ -3190,6 +3191,15 @@
                 return;
             }
 
+            // Blocks login until the confirmation email is clicked.
+            // "verified" is blank/undefined for every account created before
+            // this feature existed — those are treated as already verified,
+            // so nobody who was already using the app gets locked out.
+            if (matchedUser.verified === 'no') {
+                showNotification("Παρακαλούμε πρώτα ελέγξτε τον λογαριασμό email που δώσατε και επιβεβαιώστε τον λογαριασμό σας για να προχωρήσετε.", "error");
+                return;
+            }
+
             completeLogin(matchedUser);
         }
 
@@ -3527,6 +3537,7 @@
         window.toggleMessageCheck = toggleMessageCheck;
         window.renderUserManagement = renderUserManagement;
         window.toggleUserPrivileges = toggleUserPrivileges;
+        window.manuallyVerifyUser = manuallyVerifyUser;
         window.refreshUserManagement = refreshUserManagement;
         window.printUserList = printUserList;
         window.openDeleteUserModal = openDeleteUserModal;
@@ -4764,20 +4775,19 @@
             closeCreateUserModal();
 
             if (createUserSelfService) {
-                // Auto-login immediately with the credentials just given —
-                // no need to retype them on the login screen. This record is
-                // a placeholder until the real one (with userid/dateCreated)
-                // comes back from the sheet a moment later.
-                const newUserRecord = { name, surname, username, password, email, department, privileges: 'user' };
-                users.push(newUserRecord);
-                completeLogin(newUserRecord, `Ο λογαριασμός σου έχει δημιουργηθεί. Καλώς ήρθες ${name}!`);
+                // No more auto-login — the account needs email confirmation
+                // first, so completeLogin() would just be rejected by the
+                // same check handleLogin() applies anyway.
+                showSuccessCelebration(`Ο λογαριασμός σου έχει δημιουργηθεί, ${name}! Ελέγξτε το email σας.`, 2200);
+                showNotification("Στείλαμε ένα email επιβεβαίωσης στη διεύθυνση που δώσατε. Πατήστε τον σύνδεσμο εκεί για να ενεργοποιήσετε τον λογαριασμό σας πριν συνδεθείτε.", "success");
             } else {
-                showSuccessCelebration(`Ο λογαριασμός σου έχει δημιουργηθεί. Καλώς ήρθες ${name}!`, 1800);
+                showSuccessCelebration(`Ο λογαριασμός δημιουργήθηκε! Αναμονή επιβεβαίωσης email.`, 1800);
+                showNotification(`Ο νέος χρήστης πρέπει να επιβεβαιώσει το email του πριν συνδεθεί. Αν χρειαστεί, μπορείτε να τον επιβεβαιώσετε χειροκίνητα από τη Διαχείριση Χρηστών.`, "success");
                 showView('dashboard');
             }
 
-            // Refresh the user directory shortly after, so the placeholder
-            // record above gets replaced with the real one from the sheet.
+            // Refresh the user directory shortly after, so the new account
+            // (including its unverified status) shows up right away.
             setTimeout(() => { loadUsersFromGoogleSheets(); }, 1500);
         }
 
@@ -4989,10 +4999,37 @@
                     <td class="p-2.5 whitespace-nowrap">
                         ${privilegesCell}
                     </td>
+                    <td class="p-2.5 whitespace-nowrap">
+                        ${u.verified === 'no'
+                            ? `<button onclick="manuallyVerifyUser('${usernameEscaped}')" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200 transition-all" title="Κλικ για χειροκίνητη επιβεβαίωση">
+                                  <i class="fa-solid fa-triangle-exclamation mr-1"></i>Μη Επιβεβαιωμένος
+                              </button>`
+                            : `<span class="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200"><i class="fa-solid fa-check mr-1"></i>Επιβεβαιωμένος</span>`}
+                    </td>
                     <td class="p-2.5 text-neutral-500 whitespace-nowrap">${u.dateCreated || '—'}</td>
                 </tr>
             `;
             }).join('');
+        }
+
+        // Manually marks a user as verified — used when the confirmation
+        // email never arrives or Brevo isn't configured/verified yet.
+        function manuallyVerifyUser(username) {
+            const u = users.find(usr => usr.username === username);
+            if (!u) return;
+            u.verified = 'yes';
+            renderUserManagement();
+
+            if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
+                fetch(googleSheetsUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'manuallyVerifyUser', username: username, actingUser: loggedUser ? loggedUser.username : '' })
+                }).catch((err) => console.error("Error manually verifying user in Google Sheets:", err));
+            }
+
+            showNotification(`Ο χρήστης "${username}" επιβεβαιώθηκε χειροκίνητα.`, "success");
         }
 
 
