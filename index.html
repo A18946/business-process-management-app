@@ -343,10 +343,34 @@
                 </div>
                 <h3 class="text-base font-bold text-neutral-900">Ξεχάσατε τον κωδικό σας;</h3>
                 <p class="text-xs text-neutral-600 leading-relaxed font-semibold">
-                    Αν ξεχάσατε τον κωδικό σας ή δεν μπορείτε να συνδεθείτε στην εφαρμογή παρακαλώ επικοινωνήστε στο τηλέφωνο <a href="tel:+302341039682" class="font-bold underline">+30 2341039682</a> ή στο email <span class="font-bold">d.dragoidis@elvial.gr</span> ή συμπληρώστε τα παρακάτω στοιχεία για να στείλετε ένα μήνυμα στον διαχειριστή. Θα επικοινωνήσουμε μαζί σας για την επίλυση του προβλήματος σύντομα.
+                    Επιλέξτε αν θα γράψετε το username ή το email σας, και θα σας στείλουμε ένα email με σύνδεσμο για να ορίσετε νέο κωδικό.
                 </p>
             </div>
-            <div class="text-left space-y-2 pt-2 border-t border-neutral-100">
+            <div class="text-left space-y-2">
+                <div class="flex rounded-xl border border-neutral-200 p-0.5 bg-neutral-50 text-xs font-bold">
+                    <button type="button" id="reset-lookup-tab-username" onclick="setResetLookupType('username')" class="flex-1 py-1.5 rounded-lg transition-all bg-neutral-900 text-white">Username</button>
+                    <button type="button" id="reset-lookup-tab-email" onclick="setResetLookupType('email')" class="flex-1 py-1.5 rounded-lg transition-all text-neutral-600">Email</button>
+                </div>
+                <div>
+                    <label id="reset-password-identifier-label" class="block text-[11px] font-bold text-neutral-800 mb-1">Username</label>
+                    <input type="text" id="reset-password-identifier" class="w-full p-2.5 border border-neutral-300 rounded-xl text-sm focus:ring-1 focus:ring-black focus:outline-none" placeholder="π.χ. gpapa">
+                </div>
+                <button id="reset-password-submit-btn" onclick="sendPasswordResetRequest()" class="w-full py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+                    Αποστολή Συνδέσμου Επαναφοράς
+                </button>
+                <div id="reset-password-loading" class="hidden w-full py-2.5 bg-neutral-100 text-neutral-700 rounded-xl text-xs font-bold text-center">
+                    Γίνεται αποστολή του συνδέσμου επαναφοράς. Παρακαλώ περιμένετε<span id="reset-password-loading-dots"></span>
+                </div>
+            </div>
+            <div class="text-center pt-1">
+                <button type="button" id="forgot-password-toggle-manual-btn" onclick="toggleForgotPasswordManualForm()" class="text-[11px] text-neutral-500 hover:text-neutral-800 font-semibold underline">
+                    Ή στείλτε μήνυμα στον διαχειριστή
+                </button>
+            </div>
+            <div id="forgot-password-manual-form" class="hidden text-left space-y-2 pt-2 border-t border-neutral-100">
+                <p class="text-xs text-neutral-600 leading-relaxed font-semibold">
+                    Μπορείτε επίσης να επικοινωνήσετε στο τηλέφωνο <a href="tel:+302341039682" class="font-bold underline">+30 2341039682</a> ή στο email <span class="font-bold">d.dragoidis@elvial.gr</span>, ή να συμπληρώσετε τα παρακάτω στοιχεία για να στείλετε ένα μήνυμα στον διαχειριστή. Θα επικοινωνήσουμε μαζί σας για την επίλυση του προβλήματος σύντομα.
+                </p>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[11px] font-bold text-neutral-800 mb-1">Όνομα</label>
@@ -370,7 +394,7 @@
                 </button>
             </div>
             <div class="pt-2">
-                <button onclick="closeForgotPasswordModal()" class="w-full py-2.5 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all">
+                <button id="forgot-password-close-btn" onclick="closeForgotPasswordModal()" class="w-full py-2.5 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all">
                     Κλείσιμο
                 </button>
             </div>
@@ -2324,7 +2348,7 @@
         // Default Google Apps Script Web App URL. Used the first time the app runs
         // (before an admin has saved a different link in Settings). The admin can
         // always override this from the gear icon -> Settings modal.
-        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbzVmJmyi5awcuu1ER_aII_4sQ5ADVn6I9lv8LGvZzFo3JjE2dwxVj_Xj2vte9-J6YWo/exec";
+        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxiodKhSwbU0Pdii5UksjTMOym7NH32sDl6p0TnS5wiOTWzc6gGJUIGARJ21e_d1Z0E/exec";
 
         // Link to the PDF user manual (Εγχειρίδιο Χρήσης) — shown in the
         // Help modal and in the process-form instructions sidebar.
@@ -2532,7 +2556,39 @@
             showNotification("Το μήνυμά σας εστάλη στον διαχειριστή.", "success");
         }
 
+        let resetLookupType = 'username';
+
+        function setResetLookupType(type) {
+            resetLookupType = type;
+            const usernameTab = document.getElementById('reset-lookup-tab-username');
+            const emailTab = document.getElementById('reset-lookup-tab-email');
+            const label = document.getElementById('reset-password-identifier-label');
+            const input = document.getElementById('reset-password-identifier');
+
+            if (type === 'email') {
+                emailTab.classList.add('bg-neutral-900', 'text-white');
+                emailTab.classList.remove('text-neutral-600');
+                usernameTab.classList.remove('bg-neutral-900', 'text-white');
+                usernameTab.classList.add('text-neutral-600');
+                label.textContent = 'Email';
+                input.placeholder = 'π.χ. gpapa@elvial.gr';
+                input.type = 'email';
+            } else {
+                usernameTab.classList.add('bg-neutral-900', 'text-white');
+                usernameTab.classList.remove('text-neutral-600');
+                emailTab.classList.remove('bg-neutral-900', 'text-white');
+                emailTab.classList.add('text-neutral-600');
+                label.textContent = 'Username';
+                input.placeholder = 'π.χ. gpapa';
+                input.type = 'text';
+            }
+            input.value = '';
+        }
+
         function openForgotPasswordModal() {
+            setResetLookupType('username');
+            setResetPasswordLoading(false);
+            document.getElementById('forgot-password-manual-form').classList.add('hidden');
             document.getElementById('forgot-password-name').value = '';
             document.getElementById('forgot-password-surname').value = '';
             document.getElementById('forgot-password-email').value = '';
@@ -2542,6 +2598,85 @@
 
         function closeForgotPasswordModal() {
             document.getElementById('forgot-password-modal').classList.add('hidden');
+        }
+
+        function toggleForgotPasswordManualForm() {
+            document.getElementById('forgot-password-manual-form').classList.toggle('hidden');
+        }
+
+        let resetPasswordDotsInterval = null;
+
+        function setResetPasswordLoading(isLoading) {
+            const btn = document.getElementById('reset-password-submit-btn');
+            const loadingEl = document.getElementById('reset-password-loading');
+            const dotsEl = document.getElementById('reset-password-loading-dots');
+            const usernameTab = document.getElementById('reset-lookup-tab-username');
+            const emailTab = document.getElementById('reset-lookup-tab-email');
+            const input = document.getElementById('reset-password-identifier');
+            const toggleBtn = document.getElementById('forgot-password-toggle-manual-btn');
+            const closeBtn = document.getElementById('forgot-password-close-btn');
+
+            if (isLoading) {
+                btn.classList.add('hidden');
+                loadingEl.classList.remove('hidden');
+                [usernameTab, emailTab, input, toggleBtn, closeBtn].forEach(el => el.disabled = true);
+                [usernameTab, emailTab, toggleBtn, closeBtn].forEach(el => el.classList.add('opacity-50', 'pointer-events-none'));
+                input.classList.add('opacity-50');
+
+                let dotCount = 0;
+                dotsEl.textContent = '';
+                resetPasswordDotsInterval = setInterval(() => {
+                    dotCount = (dotCount % 4) + 1; // cycles 1,2,3,4 then back to 1
+                    dotsEl.textContent = '.'.repeat(dotCount);
+                }, 400);
+            } else {
+                clearInterval(resetPasswordDotsInterval);
+                btn.classList.remove('hidden');
+                loadingEl.classList.add('hidden');
+                [usernameTab, emailTab, input, toggleBtn, closeBtn].forEach(el => el.disabled = false);
+                [usernameTab, emailTab, toggleBtn, closeBtn].forEach(el => el.classList.remove('opacity-50', 'pointer-events-none'));
+                input.classList.remove('opacity-50');
+            }
+        }
+
+        // Self-service password reset — looks up the account by whichever
+        // identifier (username or email) the person selected via the tabs,
+        // and shows the specific outcome. Uses a GET request (not the
+        // no-cors POSTs used elsewhere) so the response can actually be
+        // read back.
+        async function sendPasswordResetRequest() {
+            const identifier = document.getElementById('reset-password-identifier').value.trim();
+            if (!identifier) {
+                showNotification(resetLookupType === 'email' ? "Παρακαλώ συμπληρώστε το email σας." : "Παρακαλώ συμπληρώστε το username σας.", "error");
+                return;
+            }
+
+            if (!GOOGLE_SHEETS_ENABLED || !googleSheetsUrl) {
+                showNotification("Η σύνδεση με το Google Sheets δεν είναι ενεργή.", "error");
+                return;
+            }
+
+            setResetPasswordLoading(true);
+            try {
+                const url = googleSheetsUrl + '?action=requestPasswordReset&lookupType=' + encodeURIComponent(resetLookupType) + '&identifier=' + encodeURIComponent(identifier);
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.status === 'not_found') {
+                    showNotification(resetLookupType === 'email'
+                        ? "Το email αυτό δεν αντιστοιχεί σε κάποιον χρήστη. Παρακαλούμε ελέγξε το email και δοκιμάστε ξανά."
+                        : "Αυτό το username δεν υπάρχει. Παρακαλώ ελέγξε την ορθογραφία και δοκιμάστε ξανά.", "error");
+                    return;
+                }
+
+                closeForgotPasswordModal();
+                showNotification("Θα λάβετε email με σύνδεσμο επαναφοράς κωδικού μέσα σε λίγα λεπτά.", "success");
+            } catch (err) {
+                console.error("Error requesting password reset:", err);
+                showNotification("Κάτι πήγε στραβά, δοκιμάστε ξανά.", "error");
+            } finally {
+                setResetPasswordLoading(false);
+            }
         }
 
         // Sends a "forgot password" message from the login screen — no
@@ -3532,6 +3667,9 @@
         window.loadMessagesFromGoogleSheets = loadMessagesFromGoogleSheets;
         window.sendMessageToAdmin = sendMessageToAdmin;
         window.openForgotPasswordModal = openForgotPasswordModal;
+        window.toggleForgotPasswordManualForm = toggleForgotPasswordManualForm;
+        window.sendPasswordResetRequest = sendPasswordResetRequest;
+        window.setResetLookupType = setResetLookupType;
         window.closeForgotPasswordModal = closeForgotPasswordModal;
         window.sendForgotPasswordMessage = sendForgotPasswordMessage;
         window.toggleMessageCheck = toggleMessageCheck;
