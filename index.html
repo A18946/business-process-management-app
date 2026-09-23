@@ -836,8 +836,14 @@
                 </div>
 
                 <!-- Stats Bar (Admin) — 5 uniform cards, in the requested order -->
+                <div class="flex justify-end">
+                    <button onclick="openDashboardCustomizeModal()" class="text-[11px] text-neutral-500 hover:text-neutral-800 font-bold flex items-center space-x-1.5 transition-all">
+                        <i class="fa-solid fa-sliders text-[10px]"></i>
+                        <span>Προσαρμογή Καρτών</span>
+                    </button>
+                </div>
                 <div id="admin-stats-bar" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm flex items-center space-x-4">
+                    <div id="stat-last-login-card-admin" class="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm flex items-center space-x-4">
                         <div class="p-3 bg-neutral-900 text-white rounded-xl">
                             <i class="fa-solid fa-clock-rotate-left text-2xl"></i>
                         </div>
@@ -895,7 +901,7 @@
                             <h3 id="stat-total" class="text-2xl font-bold text-neutral-800">0</h3>
                         </div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm flex items-center space-x-4">
+                    <div id="stat-last-login-card" class="bg-white p-5 rounded-2xl border border-neutral-200 shadow-sm flex items-center space-x-4">
                         <div class="p-2 bg-neutral-900 text-white rounded-xl">
                             <i class="fa-solid fa-clock-rotate-left text-base"></i>
                         </div>
@@ -969,6 +975,10 @@
                                 <i class="fa-solid fa-sliders"></i>
                                 <span>Φίλτρα</span>
                             </button>
+                            <button onclick="openCommandPalette()" title="Γρήγορη αναζήτηση (Ctrl+K)" class="bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 whitespace-nowrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <kbd class="hidden sm:inline text-[9px] text-neutral-400 border border-neutral-200 rounded px-1">Ctrl+K</kbd>
+                            </button>
                             <button onclick="printAllProcesses()" class="bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 whitespace-nowrap">
                                 <i class="fa-solid fa-print"></i>
                                 <span>Εξαγωγή Όλων σε PDF</span>
@@ -1024,12 +1034,21 @@
 
                     <!-- Empty State -->
                     <div id="empty-state" class="text-center py-16 border-2 border-dashed border-neutral-200 rounded-xl">
-                        <div class="animate-float bg-neutral-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fa-solid fa-box-open text-neutral-400 text-2xl"></i>
+                        <div class="animate-float mx-auto mb-4 w-24 h-24">
+                            <svg viewBox="0 0 120 120" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="60" cy="60" r="56" fill="#F5F5F5"/>
+                                <rect x="34" y="30" width="52" height="64" rx="6" fill="white" stroke="#D4D4D4" stroke-width="2.5"/>
+                                <line x1="44" y1="46" x2="76" y2="46" stroke="#D4D4D4" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="44" y1="58" x2="76" y2="58" stroke="#D4D4D4" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="44" y1="70" x2="64" y2="70" stroke="#D4D4D4" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="82" cy="82" r="16" fill="#171717"/>
+                                <line x1="76" y1="82" x2="88" y2="82" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="82" y1="76" x2="82" y2="88" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
                         </div>
-                        <h4 class="text-neutral-800 font-semibold">Δεν βρέθηκαν διαδικασίες</h4>
-                        <p class="text-xs text-neutral-500 max-w-sm mx-auto mt-1">Δεν έχετε καταγράψει ακόμα κάποια διαδικασία, ή δεν ταιριάζει κανένα αποτέλεσμα στην αναζήτησή σας.</p>
-                        <button onclick="startNewProcess()" class="mt-4 bg-neutral-950 text-white hover:bg-neutral-800 px-4 py-2 rounded-xl text-xs font-bold transition-all inline-flex items-center">
+                        <h4 id="empty-state-title" class="text-neutral-800 font-semibold">Δεν βρέθηκαν διαδικασίες</h4>
+                        <p id="empty-state-desc" class="text-xs text-neutral-500 max-w-sm mx-auto mt-1">Δεν έχετε καταγράψει ακόμα κάποια διαδικασία.</p>
+                        <button id="empty-state-cta" onclick="startNewProcess()" class="mt-4 bg-neutral-950 text-white hover:bg-neutral-800 px-4 py-2 rounded-xl text-xs font-bold transition-all inline-flex items-center">
                             <i class="fa-solid fa-plus mr-2"></i> Ξεκινήστε την Καταγραφή
                         </button>
                     </div>
@@ -1750,6 +1769,7 @@
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Connected</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Last Connected</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Δικαιώματα</th>
+                                    <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Προβολή Τμήματος</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Επιβεβαίωση Email</th>
                                     <th class="p-2.5 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Ημ. Δημιουργίας</th>
                                 </tr>
@@ -2042,6 +2062,32 @@
         <!-- ================= MODALS & POPUPS ================= -->
         
         <!-- Google Sheets Configuration Modal -->
+        <!-- ================= DASHBOARD CARD CUSTOMIZATION ================= -->
+        <div id="dashboard-customize-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-[240] hidden items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 space-y-4">
+                <div>
+                    <h3 class="text-base font-bold text-neutral-900">Προσαρμογή Καρτών Πίνακα</h3>
+                    <p class="text-xs text-neutral-500 mt-1">Επίλεξε ποιες κάρτες στατιστικών θέλεις να βλέπεις. Η επιλογή σου αποθηκεύεται σε αυτόν τον browser.</p>
+                </div>
+                <div id="dashboard-customize-options" class="space-y-2"></div>
+                <button onclick="closeDashboardCustomizeModal()" class="w-full py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+                    Κλείσιμο
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= COMMAND PALETTE (Ctrl/Cmd+K) ================= -->
+        <div id="command-palette-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-[240] hidden items-start justify-center pt-24" onclick="if(event.target === this) closeCommandPalette();">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-fadeIn">
+                <div class="flex items-center px-4 py-3 border-b border-neutral-100">
+                    <i class="fa-solid fa-magnifying-glass text-neutral-400 mr-3"></i>
+                    <input type="text" id="command-palette-input" placeholder="Αναζήτηση διαδικασιών ή ενεργειών..." class="flex-1 outline-none text-sm font-medium placeholder-neutral-400" oninput="renderCommandPaletteResults()" onkeydown="handleCommandPaletteKeydown(event)">
+                    <kbd class="text-[10px] font-bold text-neutral-400 border border-neutral-200 rounded px-1.5 py-0.5">ESC</kbd>
+                </div>
+                <div id="command-palette-results" class="max-h-96 overflow-y-auto py-2"></div>
+            </div>
+        </div>
+
         <div id="settings-modal" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
             <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-neutral-200 animate-fadeIn flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between border-b border-neutral-200 pb-3">
@@ -2348,7 +2394,7 @@
         // Default Google Apps Script Web App URL. Used the first time the app runs
         // (before an admin has saved a different link in Settings). The admin can
         // always override this from the gear icon -> Settings modal.
-        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxiodKhSwbU0Pdii5UksjTMOym7NH32sDl6p0TnS5wiOTWzc6gGJUIGARJ21e_d1Z0E/exec";
+        const DEFAULT_GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbxctJ9_PkQcGq2YahOgnGt-efjaiRzJ9jVIcomj3n4tKQCNIVFQEmj2429UsAPmBiah/exec";
 
         // Link to the PDF user manual (Εγχειρίδιο Χρήσης) — shown in the
         // Help modal and in the process-form instructions sidebar.
@@ -2816,7 +2862,6 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         <button onclick="syncFromGoogleSheets(); syncCompletionsFromGoogleSheets();" class="underline font-bold hover:text-green-950">Ανανέωση</button>
-                        <button onclick="openSettingsModal()" class="underline font-bold hover:text-green-950">Αλλαγή</button>
                     </div>
                 `;
                 banner.classList.remove('hidden');
@@ -2834,7 +2879,6 @@
                         <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                         <span><strong>Ημιτελής Σύνδεση:</strong> Δεν έχει οριστεί URL για το Google Sheets. Τα δεδομένα αποθηκεύονται τοπικά στον Browser.</span>
                     </div>
-                    <button onclick="openSettingsModal()" class="underline font-bold hover:text-amber-950">Σύνδεση Τώρα</button>
                 `;
                 banner.classList.remove('hidden');
                 loadLocalBackup();
@@ -2843,7 +2887,10 @@
 
         async function syncFromGoogleSheets(silent = false) {
             if (!GOOGLE_SHEETS_ENABLED || !googleSheetsUrl) return { success: false, count: 0 };
-            if (!silent) showNotification("Συγχρονισμός δεδομένων...", "warning");
+            if (!silent) {
+                showNotification("Συγχρονισμός δεδομένων...", "warning");
+                renderProcessesSkeleton();
+            }
             try {
                 const response = await fetch(googleSheetsUrl);
                 const rawText = await response.text();
@@ -3343,7 +3390,7 @@
         // login right after a self-service account is created.
         function completeLogin(matchedUser, welcomeMessage) {
             const role = String(matchedUser.privileges || '').toLowerCase() === 'admin' ? 'admin' : 'user';
-            loggedUser = { username: matchedUser.username, role: role };
+            loggedUser = { username: matchedUser.username, role: role, deptViewAccess: matchedUser.deptViewAccess || '' };
 
             // "Τελευταία Σύνδεση" should show the PREVIOUS login, not this
             // current session. Prefer the value already on record in the
@@ -3675,6 +3722,7 @@
         window.toggleMessageCheck = toggleMessageCheck;
         window.renderUserManagement = renderUserManagement;
         window.toggleUserPrivileges = toggleUserPrivileges;
+        window.updateUserDeptViewAccess = updateUserDeptViewAccess;
         window.manuallyVerifyUser = manuallyVerifyUser;
         window.refreshUserManagement = refreshUserManagement;
         window.printUserList = printUserList;
@@ -3703,6 +3751,14 @@
         window.toggleOtherDeptInput = toggleOtherDeptInput;
         window.toggleStepOtherDept = toggleStepOtherDept;
         window.openSettingsModal = openSettingsModal;
+        window.openDashboardCustomizeModal = openDashboardCustomizeModal;
+        window.closeDashboardCustomizeModal = closeDashboardCustomizeModal;
+        window.toggleDashboardCardVisibility = toggleDashboardCardVisibility;
+        window.openCommandPalette = openCommandPalette;
+        window.closeCommandPalette = closeCommandPalette;
+        window.renderCommandPaletteResults = renderCommandPaletteResults;
+        window.activateCommandPaletteResult = activateCommandPaletteResult;
+        window.handleCommandPaletteKeydown = handleCommandPaletteKeydown;
         window.syncFromGoogleSheets = syncFromGoogleSheets;
         window.syncCompletionsFromGoogleSheets = syncCompletionsFromGoogleSheets;
         window.refreshAdminConsoleData = refreshAdminConsoleData;
@@ -4624,6 +4680,19 @@
             return (deptValue || '').substring(0, 3).toUpperCase();
         }
 
+        // Deterministic accent color per department, derived from its code
+        // so every department gets a distinct, stable hue without having to
+        // hand-pick 29 colors. Used as a small visual scan-aid on process
+        // cards/rows — subtle, not loud.
+        function deptAccentColor(deptValue) {
+            const code = deptCodeFor(deptValue);
+            let hash = 0;
+            for (let i = 0; i < code.length; i++) {
+                hash = (hash * 31 + code.charCodeAt(i)) % 360;
+            }
+            return `hsl(${hash}, 55%, 45%)`;
+        }
+
         // Toggles the free-text "other department" input for a given select
         // (field-a3 / new-user-department / profile-department) based on
         // whether "Άλλο..." is currently selected.
@@ -5138,6 +5207,12 @@
                         ${privilegesCell}
                     </td>
                     <td class="p-2.5 whitespace-nowrap">
+                        <select onchange="updateUserDeptViewAccess('${usernameEscaped}', this.value)" title="Ο χρήστης θα βλέπει όλες τις διαδικασίες αυτού του τμήματος, όχι μόνο τις δικές του" class="text-[11px] font-semibold border border-neutral-200 rounded-lg px-2 py-1 bg-white hover:bg-neutral-50 transition-all max-w-[140px]">
+                            <option value="">Κανένα</option>
+                            ${Object.keys(DEPT_CODE_MAP).map(d => `<option value="${d}" ${u.deptViewAccess === d ? 'selected' : ''}>${d}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="p-2.5 whitespace-nowrap">
                         ${u.verified === 'no'
                             ? `<button onclick="manuallyVerifyUser('${usernameEscaped}')" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200 transition-all" title="Κλικ για χειροκίνητη επιβεβαίωση">
                                   <i class="fa-solid fa-triangle-exclamation mr-1"></i>Μη Επιβεβαιωμένος
@@ -5202,6 +5277,29 @@
             }
 
             showNotification(`Ο χρήστης "${username}" είναι πλέον ${newPrivileges === 'admin' ? 'admin' : 'χρήστης'}.`, "success");
+        }
+
+        // Grants (or revokes, if blank) a regular user visibility into
+        // every process of a whole department — for department managers
+        // who aren't admins but need the full team picture. Admin-only,
+        // set from the dropdown next to the admin/user toggle.
+        function updateUserDeptViewAccess(username, department) {
+            const u = users.find(usr => usr.username === username);
+            if (!u) return;
+            u.deptViewAccess = department;
+
+            if (GOOGLE_SHEETS_ENABLED && googleSheetsUrl) {
+                fetch(googleSheetsUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'updateUserDeptViewAccess', username: username, department: department, actingUser: loggedUser ? loggedUser.username : '' })
+                }).catch((err) => console.error("Error updating department view access in Google Sheets:", err));
+            }
+
+            showNotification(department
+                ? `Ο χρήστης "${username}" βλέπει πλέον όλες τις διαδικασίες του τμήματος "${department}".`
+                : `Αφαιρέθηκε η πρόσβαση τμήματος από τον χρήστη "${username}".`, "success");
         }
 
         // Exports the user list to PDF via the browser's print dialog
@@ -6913,6 +7011,7 @@
                 const ownProcessCount = loggedUser ? getVisibleProcesses().filter(p => p.createdBy === loggedUser.username).length : 0;
                 heroLabel.innerText = ownProcessCount > 0 ? "+ Νέα Διαδικασία" : "Ξεκινήστε Τώρα";
             }
+            applyDashboardCustomization();
         }
 
         // "Έχω ολοκληρώσει όλες τις διεργασίες μου": records a completion
@@ -7440,11 +7539,27 @@
             return processes.filter(p => p.status !== 'deleted');
         }
 
+        // Whether the logged-in user is allowed to view/edit/delete/see the
+        // history of a given process: admins always can; regular users can
+        // for their own processes; and a department-wide viewer (manager)
+        // can for every process in the department they were granted.
+        function canAccessProcess(p) {
+            if (!loggedUser) return false;
+            if (loggedUser.role === 'admin') return true;
+            if (p.createdBy === loggedUser.username) return true;
+            if (loggedUser.deptViewAccess && p.a3 === loggedUser.deptViewAccess) return true;
+            return false;
+        }
+
         function getFilteredProcessList() {
             if (!loggedUser) return [];
             const visible = getVisibleProcesses();
             if (loggedUser.role === 'admin') {
                 return visible;
+            } else if (loggedUser.deptViewAccess) {
+                // Department-wide viewer (e.g. a manager who isn't an admin):
+                // sees every process in that department, not just their own.
+                return visible.filter(p => p.a3 === loggedUser.deptViewAccess);
             } else {
                 return visible.filter(p => p.createdBy === loggedUser.username);
             }
@@ -7485,6 +7600,32 @@
             listBtn.className = (userProcessViewMode === 'list' ? activeClass : inactiveClass) + " border-l border-neutral-300";
         }
 
+        // Shows pulsing placeholder cards in the processes area while a
+        // manual refresh is in flight, instead of leaving stale content or
+        // an empty gap on screen for that moment.
+        function renderProcessesSkeleton() {
+            const container = document.getElementById('processes-container');
+            const emptyState = document.getElementById('empty-state');
+            if (!container) return;
+            emptyState?.classList.add('hidden');
+            container.classList.remove('hidden');
+            container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5";
+            container.innerHTML = Array.from({ length: 6 }).map(() => `
+                <div class="bg-white border border-neutral-200 rounded-2xl p-5 animate-pulse">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="h-3 w-16 bg-neutral-200 rounded"></div>
+                        <div class="h-5 w-14 bg-neutral-200 rounded-full"></div>
+                    </div>
+                    <div class="h-4 w-3/4 bg-neutral-200 rounded mb-2"></div>
+                    <div class="h-3 w-1/2 bg-neutral-200 rounded mb-5"></div>
+                    <div class="flex justify-between items-center pt-3 border-t border-neutral-100">
+                        <div class="h-3 w-20 bg-neutral-200 rounded"></div>
+                        <div class="h-6 w-6 bg-neutral-200 rounded-lg"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function renderProcessesList(list = null) {
             const scrollX = window.scrollX;
             const scrollY = window.scrollY;
@@ -7505,10 +7646,13 @@
             const emptyState = document.getElementById('empty-state');
             
             let activeList;
+            let baseList;
             if (list) {
                 activeList = list;
+                baseList = list;
             } else {
-                activeList = getFilteredProcessList();
+                baseList = getFilteredProcessList();
+                activeList = baseList;
                 if (statusFilterActive) {
                     activeList = activeList.filter(p => p.status === statusFilterActive);
                 }
@@ -7521,6 +7665,18 @@
             if (activeList.length === 0) {
                 container.classList.add('hidden');
                 emptyState.classList.remove('hidden');
+                const titleEl = document.getElementById('empty-state-title');
+                const descEl = document.getElementById('empty-state-desc');
+                const ctaEl = document.getElementById('empty-state-cta');
+                if (baseList.length === 0) {
+                    titleEl.textContent = 'Δεν βρέθηκαν διαδικασίες';
+                    descEl.textContent = 'Δεν έχετε καταγράψει ακόμα κάποια διαδικασία.';
+                    ctaEl.classList.remove('hidden');
+                } else {
+                    titleEl.textContent = 'Κανένα αποτέλεσμα';
+                    descEl.textContent = 'Δεν ταιριάζει καμία διαδικασία με τα τρέχοντα φίλτρα ή την αναζήτησή σας.';
+                    ctaEl.classList.add('hidden');
+                }
                 return;
             }
 
@@ -7555,7 +7711,8 @@
                 wrapper.appendChild(checkboxHolder);
 
                 const card = document.createElement('div');
-                card.className = "hover-lift bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between flex-1 min-w-0" + (isDraft ? " cursor-pointer" : "");
+                card.className = "hover-lift bg-white border border-neutral-200 border-l-4 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between flex-1 min-w-0" + (isDraft ? " cursor-pointer" : "");
+                card.style.borderLeftColor = deptAccentColor(p.a3);
                 if (isDraft) {
                     card.onclick = () => editProcess(p.id);
                 }
@@ -7636,7 +7793,8 @@
                 else if (p.a11 === "Μέση") critClass = "bg-neutral-200 text-neutral-800 border border-neutral-300";
 
                 const row = document.createElement('div');
-                row.className = "bg-white border border-neutral-200 rounded-2xl px-5 py-3.5 shadow-sm hover:shadow-md transition-all grid items-center gap-4" + (isDraft ? " cursor-pointer" : "");
+                row.className = "bg-white border border-neutral-200 border-l-4 rounded-2xl px-5 py-3.5 shadow-sm hover:shadow-md transition-all grid items-center gap-4" + (isDraft ? " cursor-pointer" : "");
+                row.style.borderLeftColor = deptAccentColor(p.a3);
                 row.style.gridTemplateColumns = "24px 90px minmax(0,1fr) 120px 130px 90px 130px 190px";
                 if (isDraft) {
                     row.onclick = () => editProcess(p.id);
@@ -7888,10 +8046,11 @@
             select.value = currentValue;
 
             // Regular users can't browse other departments — the filter is
-            // locked to their own, taken from the Users sheet.
+            // locked to their own (or, for a department-wide viewer, to the
+            // department they were granted access to).
             if (loggedUser && loggedUser.role !== 'admin') {
                 const matchedSheetUser = users.find(u => (u.username || '').toLowerCase() === loggedUser.username.toLowerCase());
-                const ownDept = matchedSheetUser ? (matchedSheetUser.department || '') : '';
+                const ownDept = loggedUser.deptViewAccess || (matchedSheetUser ? (matchedSheetUser.department || '') : '');
                 if (ownDept && !depts.includes(ownDept)) {
                     select.innerHTML += `<option value="${ownDept}">${ownDept}</option>`;
                 }
@@ -7982,7 +8141,7 @@
                 const isSelected = bulkSelectedIds.has(p.id);
 
                 rowsHTML += `
-                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-all${isDraft ? ' cursor-pointer' : ''}${rowBgClass}"${isDraft ? ` onclick="editProcess('${p.id}')"` : ''}>
+                    <tr class="border-b border-neutral-100 hover:bg-neutral-50 transition-all border-l-4${isDraft ? ' cursor-pointer' : ''}${rowBgClass}" style="border-left-color:${deptAccentColor(p.a3)}"${isDraft ? ` onclick="editProcess('${p.id}')"` : ''}>
                         <td class="p-3 text-center" onclick="event.stopPropagation();">
                             <input type="checkbox" onclick="toggleBulkSelection('${p.id}', this)" ${isSelected ? 'checked' : ''} class="w-4 h-4 accent-neutral-600 cursor-pointer" title="Επιλογή για μαζική ενέργεια">
                         </td>
@@ -8383,6 +8542,12 @@
                         </div>
                         ` : ''}
                     </div>
+
+                    <!-- Document footer -->
+                    <div class="pt-4 mt-2 border-t border-neutral-200 flex justify-between items-center text-[10px] text-neutral-400 font-semibold">
+                        <span>ELVIAL — Business Process Management</span>
+                        <span>${p.a1 || 'PROC-000'} · Εξήχθη ${new Date().toLocaleDateString('el-GR')}</span>
+                    </div>
                 </div>
             `;
         }
@@ -8392,7 +8557,7 @@
         function showRevisionHistory(id) {
             const p = processes.find(proc => proc.id === id);
             if (!p) return;
-            if (loggedUser && loggedUser.role !== 'admin' && p.createdBy !== loggedUser.username) {
+            if (!canAccessProcess(p)) {
                 showNotification("Δεν έχετε δικαίωμα προβολής του ιστορικού αυτής της διαδικασίας.", "error");
                 return;
             }
@@ -8491,7 +8656,7 @@
         function viewProcessDetails(id) {
             const p = processes.find(proc => proc.id === id);
             if (!p) return;
-            if (loggedUser && loggedUser.role !== 'admin' && p.createdBy !== loggedUser.username) {
+            if (!canAccessProcess(p)) {
                 showNotification("Δεν έχετε δικαίωμα προβολής αυτής της διαδικασίας.", "error");
                 return;
             }
@@ -8510,7 +8675,7 @@
         function editProcess(id) {
             const p = processes.find(proc => proc.id === id);
             if (!p) return;
-            if (loggedUser && loggedUser.role !== 'admin' && p.createdBy !== loggedUser.username) {
+            if (!canAccessProcess(p)) {
                 showNotification("Δεν έχετε δικαίωμα επεξεργασίας αυτής της διαδικασίας.", "error");
                 return;
             }
@@ -8693,7 +8858,7 @@
 
         function deleteProcess(id) {
             const p = processes.find(proc => proc.id === id);
-            if (p && loggedUser && loggedUser.role !== 'admin' && p.createdBy !== loggedUser.username) {
+            if (p && !canAccessProcess(p)) {
                 showNotification("Δεν έχετε δικαίωμα διαγραφής αυτής της διαδικασίας.", "error");
                 return;
             }
@@ -8845,6 +9010,211 @@
             printArea.classList.add('hidden');
         }
 
+        // ================= DASHBOARD CARD CUSTOMIZATION =================
+        // Lets each user show/hide their own stat cards — persisted per
+        // browser (localStorage), scoped by username so shared computers
+        // don't mix preferences between people.
+        function getDashboardCardDefs() {
+            const isAdmin = loggedUser && loggedUser.role === 'admin';
+            if (isAdmin) {
+                return [
+                    { id: 'stat-last-login-card-admin', label: 'Τελευταία Σύνδεση' },
+                    { id: 'stat-total-card-admin', label: 'Συνολικές Διαδικασίες' },
+                    { id: 'stat-completed-card-admin', label: 'Ολοκληρωμένες Διαδικασίες' },
+                    { id: 'stat-unreviewed-card', label: 'Μη Ελεγμένες Διαδικασίες' },
+                    { id: 'stat-drafts-card-admin', label: 'Πρόχειρες (Μη Ολοκληρωμένες)' },
+                ];
+            }
+            return [
+                { id: 'stat-total-card', label: 'Συνολικές Διαδικασίες' },
+                { id: 'stat-last-login-card', label: 'Τελευταία Σύνδεση' },
+                { id: 'stat-completed-card', label: 'Ολοκληρωμένες Διαδικασίες' },
+                { id: 'stat-drafts-card', label: 'Πρόχειρες (Μη Ολοκληρωμένες)' },
+            ];
+        }
+
+        function getDashboardCustomizeStorageKey() {
+            return `dashboardHiddenStats_${loggedUser ? loggedUser.username : 'anon'}`;
+        }
+
+        function getHiddenDashboardCardIds() {
+            try {
+                return JSON.parse(localStorage.getItem(getDashboardCustomizeStorageKey())) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Applies the stored show/hide preferences — called after login and
+        // whenever stats render, so the layout is always in sync with what
+        // the user last chose.
+        function applyDashboardCustomization() {
+            const hiddenIds = getHiddenDashboardCardIds();
+            getDashboardCardDefs().forEach((def) => {
+                const el = document.getElementById(def.id);
+                if (el) el.classList.toggle('hidden', hiddenIds.includes(def.id));
+            });
+        }
+
+        function openDashboardCustomizeModal() {
+            const hiddenIds = getHiddenDashboardCardIds();
+            const optionsEl = document.getElementById('dashboard-customize-options');
+            optionsEl.innerHTML = getDashboardCardDefs().map((def) => `
+                <label class="flex items-center justify-between px-3 py-2.5 border border-neutral-200 rounded-xl cursor-pointer hover:bg-neutral-50 transition-all">
+                    <span class="text-sm font-semibold text-neutral-800">${def.label}</span>
+                    <input type="checkbox" data-card-id="${def.id}" onchange="toggleDashboardCardVisibility(this)" ${hiddenIds.includes(def.id) ? '' : 'checked'} class="w-4 h-4 accent-black cursor-pointer">
+                </label>
+            `).join('');
+            document.getElementById('dashboard-customize-modal').classList.remove('hidden');
+            document.getElementById('dashboard-customize-modal').classList.add('flex');
+        }
+
+        function closeDashboardCustomizeModal() {
+            document.getElementById('dashboard-customize-modal').classList.add('hidden');
+            document.getElementById('dashboard-customize-modal').classList.remove('flex');
+        }
+
+        function toggleDashboardCardVisibility(checkboxEl) {
+            const cardId = checkboxEl.dataset.cardId;
+            let hiddenIds = getHiddenDashboardCardIds();
+            if (checkboxEl.checked) {
+                hiddenIds = hiddenIds.filter(id => id !== cardId);
+            } else if (!hiddenIds.includes(cardId)) {
+                hiddenIds.push(cardId);
+            }
+            localStorage.setItem(getDashboardCustomizeStorageKey(), JSON.stringify(hiddenIds));
+            applyDashboardCustomization();
+        }
+
+        // ================= COMMAND PALETTE (Ctrl/Cmd+K) =================
+        let commandPaletteSelectedIndex = 0;
+        let commandPaletteCurrentResults = [];
+
+        function getCommandPaletteActions() {
+            const isAdmin = loggedUser && loggedUser.role === 'admin';
+            const actions = [
+                { icon: 'fa-plus', label: 'Νέα Διαδικασία', run: () => startNewProcess() },
+                { icon: 'fa-house', label: 'Πίνακας Ελέγχου', run: () => showView('dashboard') },
+            ];
+            if (isAdmin) {
+                actions.push(
+                    { icon: 'fa-gauge', label: 'Κονσόλα Διαχειριστή', run: () => showView('admin-console') },
+                    { icon: 'fa-chart-simple', label: 'Στατιστικά', run: () => showView('stats-dashboard') },
+                    { icon: 'fa-users', label: 'Διαχείριση Χρηστών', run: () => showView('user-management') },
+                    { icon: 'fa-envelope', label: 'Μηνύματα', run: () => showView('messages') },
+                    { icon: 'fa-trash-can', label: 'Κάδος Ανακύκλωσης', run: () => showView('recycle-bin') },
+                    { icon: 'fa-clock-rotate-left', label: 'Audit Log', run: () => showView('audit-log') },
+                    { icon: 'fa-building', label: 'Τμήματα', run: () => showView('departments-report') },
+                );
+            }
+            return actions;
+        }
+
+        function openCommandPalette() {
+            document.getElementById('command-palette-modal').classList.remove('hidden');
+            document.getElementById('command-palette-modal').classList.add('flex');
+            const input = document.getElementById('command-palette-input');
+            input.value = '';
+            renderCommandPaletteResults();
+            setTimeout(() => input.focus(), 30);
+        }
+
+        function closeCommandPalette() {
+            document.getElementById('command-palette-modal').classList.add('hidden');
+            document.getElementById('command-palette-modal').classList.remove('flex');
+        }
+
+        function renderCommandPaletteResults() {
+            const query = document.getElementById('command-palette-input').value.trim().toLowerCase();
+            const resultsEl = document.getElementById('command-palette-results');
+            commandPaletteSelectedIndex = 0;
+            commandPaletteCurrentResults = [];
+
+            const actions = getCommandPaletteActions()
+                .filter(a => !query || a.label.toLowerCase().includes(query))
+                .map(a => ({ type: 'action', icon: a.icon, label: a.label, sublabel: 'Ενέργεια', run: a.run }));
+
+            let matchingProcesses = [];
+            if (query) {
+                const scope = getFilteredProcessList();
+                matchingProcesses = scope
+                    .filter(p => (p.a1 || '').toLowerCase().includes(query) || (p.a2 || '').toLowerCase().includes(query))
+                    .slice(0, 8)
+                    .map(p => ({
+                        type: 'process',
+                        icon: 'fa-file-lines',
+                        label: p.a2 || p.a1 || 'Χωρίς όνομα',
+                        sublabel: p.a1 || '',
+                        run: () => (p.status === 'draft' ? editProcess(p.id) : viewProcessDetails(p.id))
+                    }));
+            }
+
+            commandPaletteCurrentResults = [...matchingProcesses, ...actions];
+
+            if (commandPaletteCurrentResults.length === 0) {
+                resultsEl.innerHTML = `<div class="px-4 py-6 text-center text-xs text-neutral-400 font-semibold">Κανένα αποτέλεσμα</div>`;
+                return;
+            }
+
+            resultsEl.innerHTML = commandPaletteCurrentResults.map((r, i) => `
+                <button onclick="activateCommandPaletteResult(${i})" data-cp-index="${i}" class="w-full flex items-center px-4 py-2.5 text-left transition-all ${i === commandPaletteSelectedIndex ? 'bg-neutral-100' : 'hover:bg-neutral-50'}">
+                    <i class="fa-solid ${r.icon} text-neutral-400 w-5 text-center mr-3"></i>
+                    <span class="text-sm font-semibold text-neutral-800 flex-1 truncate">${r.label}</span>
+                    <span class="text-[10px] text-neutral-400 font-bold ml-2 whitespace-nowrap">${r.sublabel}</span>
+                </button>
+            `).join('');
+        }
+
+        function activateCommandPaletteResult(index) {
+            const result = commandPaletteCurrentResults[index];
+            if (!result) return;
+            closeCommandPalette();
+            result.run();
+        }
+
+        function updateCommandPaletteSelection() {
+            document.querySelectorAll('[data-cp-index]').forEach((el) => {
+                const isSelected = Number(el.dataset.cpIndex) === commandPaletteSelectedIndex;
+                el.classList.toggle('bg-neutral-100', isSelected);
+                el.classList.toggle('hover:bg-neutral-50', !isSelected);
+            });
+            const selectedEl = document.querySelector(`[data-cp-index="${commandPaletteSelectedIndex}"]`);
+            if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
+        }
+
+        function handleCommandPaletteKeydown(event) {
+            if (event.key === 'Escape') {
+                closeCommandPalette();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                commandPaletteSelectedIndex = Math.min(commandPaletteSelectedIndex + 1, commandPaletteCurrentResults.length - 1);
+                updateCommandPaletteSelection();
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                commandPaletteSelectedIndex = Math.max(commandPaletteSelectedIndex - 1, 0);
+                updateCommandPaletteSelection();
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                activateCommandPaletteResult(commandPaletteSelectedIndex);
+            }
+        }
+
+        // Global shortcut: Ctrl+K / Cmd+K opens the palette from anywhere
+        // once a user is logged in. Only active post-login so it doesn't
+        // interfere with the login screen itself.
+        document.addEventListener('keydown', (event) => {
+            const isShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+            if (isShortcut && loggedUser) {
+                event.preventDefault();
+                const modal = document.getElementById('command-palette-modal');
+                if (modal.classList.contains('hidden')) {
+                    openCommandPalette();
+                } else {
+                    closeCommandPalette();
+                }
+            }
+        });
+
         function openSettingsModal() {
             document.getElementById('google-sheets-url-input').value = googleSheetsUrl;
             document.getElementById('settings-modal').classList.remove('hidden');
@@ -8864,9 +9234,21 @@
             initGoogleSheetsConfig();
         }
 
+        function getNotificationStack() {
+            let stack = document.getElementById('notification-stack');
+            if (!stack) {
+                stack = document.createElement('div');
+                stack.id = 'notification-stack';
+                stack.className = 'fixed bottom-5 right-5 z-50 flex flex-col-reverse gap-2 items-end pointer-events-none';
+                document.body.appendChild(stack);
+            }
+            return stack;
+        }
+
         function showNotification(message, type = "success") {
+            const stack = getNotificationStack();
             const notif = document.createElement('div');
-            notif.className = `fixed bottom-5 right-5 z-50 p-4 rounded-xl shadow-xl border flex items-center space-x-3 transition-all duration-300 transform translate-y-10 opacity-0 max-w-sm`;
+            notif.className = `p-4 rounded-xl shadow-xl border flex items-center space-x-3 transition-all duration-300 transform translate-y-10 opacity-0 max-w-sm pointer-events-auto`;
             
             let bgClass = "bg-white border-neutral-200 text-neutral-800";
             let icon = '<i class="fa-solid fa-circle-check text-black text-lg"></i>';
@@ -8885,7 +9267,7 @@
                 <div class="text-xs font-semibold leading-relaxed">${message}</div>
             `;
 
-            document.body.appendChild(notif);
+            stack.appendChild(notif);
             
             setTimeout(() => {
                 notif.classList.remove('translate-y-10', 'opacity-0');
@@ -8894,7 +9276,7 @@
             setTimeout(() => {
                 notif.classList.add('translate-y-10', 'opacity-0');
                 setTimeout(() => {
-                    document.body.removeChild(notif);
+                    notif.remove();
                 }, 300);
             }, 4500);
         }
